@@ -4,7 +4,11 @@ const inputNota = document.getElementById("note-content");
 
 const botaoAddNota = document.querySelector(".add-note");
 
+// ====== EVENTOS ======
+
 function adicionarNota() {
+
+    const notas = recuperarNotas();
 
     const objetoNota = {
         id: 1,
@@ -17,6 +21,11 @@ function adicionarNota() {
 
     containerNota.appendChild(elementoNota); //faz com que a nota apareça na página
 
+    notas.push(objetoNota); //salva array na local storage
+
+    salvarNotas(notas); //salva as notas na local storage
+
+    inputNota.value = ""; //atribui vazio para o campo do input após o usuario add uma nota
 }
 
 //gerar um id aleátorio para que todos os ids sejam diferentes
@@ -40,9 +49,73 @@ function criarNota(id, conteudo, fixed) {
 
     elemento.appendChild(areaTexto);
 
-    return elemento;
+    if (fixed) { //pin
+        elemento.classList.add("fixed");
+    }
 
+    const iconePin = document.createElement("i");
+
+    iconePin.classList.add(...["bi", "bi-pin"]);
+
+    elemento.appendChild(iconePin);
+
+    //eventos do elemento
+    elemento.querySelector(".bi-pin").addEventListener("click", () => {
+        alteraPinNota(id);
+    });
+
+    return elemento;
 }
 
-//adiciona evento de criar nota quando é clicado no botao
+function exibirNotas() {
+
+    limparNotas();
+
+    recuperarNotas().forEach((nota) => {
+        const elementoNota = criarNota(nota.id, nota.conteudo, nota.fixed);
+
+        containerNota.appendChild(elementoNota);
+    });
+}
+
+function alteraPinNota(id) {
+
+    const notas = recuperarNotas();
+
+    const notaAlvo = notas.filter((nota) => nota.id === id)[0];
+    //acessa a posicao 0 porque é um array de apenas uma posicao
+
+    notaAlvo.fixed = !notaAlvo.fixed; //duas funcionalidades
+
+    salvarNotas(notas);
+
+    exibirNotas();
+}
+
+function limparNotas() {
+
+    containerNota.replaceChildren([]);
+}
+
+// ====== LOCAL STORAGE ======
+
+function salvarNotas(notas) {
+
+    localStorage.setItem("notas", JSON.stringify(notas));
+}
+
+function recuperarNotas() { //recupera notas na local storage caso existam
+
+    const notas = JSON.parse(localStorage.getItem("notas") || "[]"); //json parse muda de array para objeto
+
+    return notas;
+}
+
+// ====== EVENTOS ======
+
 botaoAddNota.addEventListener("click", () => adicionarNota());
+//adiciona evento de criar nota quando é clicado no botao
+
+// ====== Inicialização ======
+
+exibirNotas();
