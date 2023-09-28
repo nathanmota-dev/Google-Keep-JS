@@ -53,15 +53,41 @@ function criarNota(id, conteudo, fixed) {
         elemento.classList.add("fixed");
     }
 
+    //Fixar
     const iconePin = document.createElement("i");
 
     iconePin.classList.add(...["bi", "bi-pin"]);
 
     elemento.appendChild(iconePin);
 
+    //Deletar
+    const iconeDeletar = document.createElement("i");
+
+    iconeDeletar.classList.add(...["bi", "bi-x-lg"]);
+
+    elemento.appendChild(iconeDeletar);
+
+    //Duplicar
+    const iconeDuplicar = document.createElement("i");
+
+    iconeDuplicar.classList.add(...["bi", "bi-file-earmark-plus"]);
+
+    elemento.appendChild(iconeDuplicar);
+
     //eventos do elemento
+    //Fixar
     elemento.querySelector(".bi-pin").addEventListener("click", () => {
         alteraPinNota(id);
+    });
+
+    //Deletar
+    elemento.querySelector(".bi-x-lg").addEventListener("click", () => {
+        deletarNota(id, elemento);
+    });
+
+    //Duplicar
+    elemento.querySelector(".bi-file-earmark-plus").addEventListener("click", () => {
+        deletarNota(id);
     });
 
     return elemento;
@@ -97,6 +123,16 @@ function limparNotas() {
     containerNota.replaceChildren([]);
 }
 
+function deletarNota(id, elemento) {
+
+    const notas = recuperarNotas().filter((notas) => notas.id !== id);
+
+    salvarNotas(notas);
+
+    containerNota.removeChild(elemento)
+
+}
+
 // ====== LOCAL STORAGE ======
 
 function salvarNotas(notas) {
@@ -108,7 +144,9 @@ function recuperarNotas() { //recupera notas na local storage caso existam
 
     const notas = JSON.parse(localStorage.getItem("notas") || "[]"); //json parse muda de array para objeto
 
-    return notas;
+    const ordenarNotas = notas.sort((a, b) => (a.fixed > b.fixed ? -1 : 1));
+
+    return ordenarNotas;
 }
 
 // ====== EVENTOS ======
