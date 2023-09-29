@@ -30,8 +30,12 @@ function adicionarNota() {
 
 //gerar um id aleátorio para que todos os ids sejam diferentes
 function gerarId() {
-
-    return Math.floor(Math.random() * 5000);
+    const notas = recuperarNotas();
+    let novoId;
+    do {
+        novoId = Math.floor(Math.random() * 5000);
+    } while (notas.some(nota => nota.id === novoId));
+    return novoId;
 }
 
 function criarNota(id, conteudo, fixed) {
@@ -60,12 +64,22 @@ function criarNota(id, conteudo, fixed) {
 
     elemento.appendChild(iconePin);
 
+    //Evento Fixar
+    elemento.querySelector(".bi-pin").addEventListener("click", () => {
+        alteraPinNota(id);
+    });
+
     //Deletar
     const iconeDeletar = document.createElement("i");
 
     iconeDeletar.classList.add(...["bi", "bi-x-lg"]);
 
     elemento.appendChild(iconeDeletar);
+
+    //Evento deletar
+    elemento.querySelector(".bi-x-lg").addEventListener("click", () => {
+        deletarNota(id, elemento);
+    });
 
     //Duplicar
     const iconeDuplicar = document.createElement("i");
@@ -74,20 +88,9 @@ function criarNota(id, conteudo, fixed) {
 
     elemento.appendChild(iconeDuplicar);
 
-    //eventos do elemento
-    //Fixar
-    elemento.querySelector(".bi-pin").addEventListener("click", () => {
-        alteraPinNota(id);
-    });
-
-    //Deletar
-    elemento.querySelector(".bi-x-lg").addEventListener("click", () => {
-        deletarNota(id, elemento);
-    });
-
-    //Duplicar
+    //Evento duplicar
     elemento.querySelector(".bi-file-earmark-plus").addEventListener("click", () => {
-        deletarNota(id);
+        duplicarNota(id);
     });
 
     return elemento;
@@ -131,6 +134,28 @@ function deletarNota(id, elemento) {
 
     containerNota.removeChild(elemento)
 
+}
+
+function duplicarNota(id) {
+
+    const notas = recuperarNotas();
+
+    const notaAlvo = notas.filter((notas) => notas.id === id)[0];
+
+    //é criado um objeto com mesmo conteudo mas id diferente
+    const objetoNota = {
+        id: gerarId(),
+        content: notaAlvo.conteudo,
+        fixed: false
+    };
+
+    const elementoNota = criarNota(objetoNota.id, objetoNota.content, objetoNota.fixed);
+
+    containerNota.appendChild(elementoNota);
+
+    notas.push(objetoNota);
+
+    salvarNotas(notas);
 }
 
 // ====== LOCAL STORAGE ======
