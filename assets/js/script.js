@@ -4,6 +4,8 @@ const inputNota = document.getElementById("note-content");
 
 const botaoAddNota = document.querySelector(".add-note");
 
+const botaoExportarCSV = document.getElementById("export-notes");
+
 // ====== EVENTOS ======
 
 function adicionarNota() {
@@ -174,10 +176,47 @@ function recuperarNotas() { //recupera notas na local storage caso existam
     return ordenarNotas;
 }
 
+function exportarParaCSV() {
+    // Recupere as notas da local storage
+    const notas = recuperarNotas();
+
+    // Verifique se há notas para exportar
+    if (notas.length === 0) {
+        alert("Não há notas para exportar.");
+        return;
+    }
+
+    //Conteúdo CSV
+    let conteudoCSV = "ID,Conteudo,Fixada\n"; // Cabeçalho do CSV
+
+    //Adicionando cada nota ao CSV
+    notas.forEach(nota => {
+        const linhaCSV = `${nota.id},"${nota.conteudo}",${nota.fixed}\n`;
+        conteudoCSV += linhaCSV;
+    });
+
+    //Blob com o conteúdo CSV
+    const blob = new Blob([conteudoCSV], { type: "text/csv" });
+
+    //URL para o Blob
+    const blobURL = URL.createObjectURL(blob);
+
+    //Link de download
+    const a = document.createElement("a");
+    a.href = blobURL;
+    a.download = "notas.csv";
+
+    //Simulando um clique no link para iniciar o download
+    a.click();
+}
+
 // ====== EVENTOS ======
 
-botaoAddNota.addEventListener("click", () => adicionarNota());
+//evento para exportar notas
+botaoExportarCSV.addEventListener("click", () => exportarParaCSV());
+
 //adiciona evento de criar nota quando é clicado no botao
+botaoAddNota.addEventListener("click", () => adicionarNota());
 
 // ====== Inicialização ======
 
