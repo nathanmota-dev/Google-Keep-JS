@@ -14,17 +14,14 @@ Este é um clone do Google Keep criado com HTML, CSS e JavaScript. Ele permite q
 
 - **Exportar para CSV:** Clicando no botão "Exportar CSV," você pode exportar todas as suas notas para um arquivo CSV para download.
 
-## Exemplo de Adicionar uma Imagem
-
+![Captura de Tela do Projeto](/assets/img/Capture.JPG)
 
 ## Como Usar
 
 1. Clone este repositório:
 
 <pre>
-```bash
 git clone https://github.com/seunome/Google-Keep-JS.git
-```
 </pre>
 
 2. Abra o arquivo `index.html` no seu navegador para executar o projeto.
