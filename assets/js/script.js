@@ -11,7 +11,7 @@ function adicionarNota() {
     const notas = recuperarNotas();
 
     const objetoNota = {
-        id: 1,
+        id: gerarId(),
         conteudo: inputNota.value,
         fixed: false,
     };
